@@ -60,27 +60,42 @@ public class Ticket
 			upperberthpositn.add(num);
 			availupperberth++;
 		}
-		else if(raclist.size()>0)
+		if(raclist.size()>0)
 		{
 			User userac=user.get(raclist.poll());
 			int racnum=userac.number;
 			racpositn.add(racnum);
+			raclist.remove(userac.getPassengerid());
 			availrac++;
+			if(waitnglist.size()>0)
+			{
+				User userwl=user.get(waitnglist.poll());
+				int numwl=userwl.number;
+				waitinglistpositn.add(numwl);
+				waitnglist.remove(userwl.getPassengerid());
 			
+				userwl.number=racpositn.get(0);
+				userwl.alloted="RAC";
+				userwl.number=numwl+1;
+				racpositn.remove(0);
+				raclist.add(userwl.getPassengerid());
+				availwaiting++;
+				availrac--;
+			}
+			RailwayReservationSystem.bookTicket(userac);
 		}
-		else if(waitnglist.size()>0)
+		if(raclist.size()>0)
 		{
-			User userwl=user.get(waitnglist.poll());
-			int numwl=userwl.number;
-			waitinglistpositn.add(numwl);
-			waitnglist.remove(userwl.getPassengerid());
-			
-			userwl.number=racpositn.get(0);
-			userwl.alloted="RAC";
-			racpositn.remove(0);
-			raclist.add(userwl.getPassengerid());
-			availwaiting++;
-			availrac--;
+			for(int i=1;i<=raclist.size();i++)
+			{
+				User chnge = user.get(raclist.poll());
+				change.number=i;
+				if(waitinglist.size()>0)
+				{
+					User chan = user.get(waitinglist.poll());
+					chan.number=i;
+				}
+			}	
 		}
 	}
 	
